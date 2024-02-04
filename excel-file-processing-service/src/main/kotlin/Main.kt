@@ -116,7 +116,7 @@ fun main() {
             .createCell(it.firstColumn)
         newCell.cellStyle = mergeStyle(workbook) as XSSFCellStyle
         val text = if (mergeMap.filterKeys { key -> key == newCell.row.rowNum }.values.first().first == Status.OK)
-            "Вернуть в течение 30 дней"
+            "Вернуть в течение 30 дней со дня выставления акта"
         else "Вернуть до ${DateTimeFormatter.ofPattern("dd.MM.yyyy").withZone(ZoneId.systemDefault()).format(deadline)}"
 
         newCell.setCellValue(text)
