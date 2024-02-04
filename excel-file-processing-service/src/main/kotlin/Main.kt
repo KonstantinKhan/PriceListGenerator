@@ -14,6 +14,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 fun main() {
 //    val path = "C:\\Users\\han\\Desktop\\Реестр акты Консалтинг 15.01.xlsx"
@@ -89,7 +91,7 @@ fun main() {
         }
     }
 
-    mergeMap.forEach { t, u ->
+    mergeMap.forEach { (t, u) ->
         if (mergeMap[t - 1] == null ||
             ((u.first == Status.EXPIRED || u.first == Status.SCAN) && mergeMap[t - 1]?.first == Status.OK) ||
             (u.first == Status.OK && (mergeMap[t - 1]?.first == Status.EXPIRED || mergeMap[t - 1]?.first == Status.SCAN))
@@ -109,14 +111,17 @@ fun main() {
         regions.add(RegionExcel(pair.first, pairsLast[index].first, pair.second, pair.second + 2))
     }
 
-    regions.forEach {
+    regions.forEach { it ->
         val newCell = sheet.getRow(it.firstRow)
             .createCell(it.firstColumn)
         newCell.cellStyle = mergeStyle(workbook) as XSSFCellStyle
-        newCell.setCellValue("Вернуть до... а то наказывать будут")
+        val text = if (mergeMap.filterKeys { key -> key == newCell.row.rowNum }.values.first().first == Status.OK)
+            "Вернуть в течение 30 дней"
+        else "Вернуть до ${DateTimeFormatter.ofPattern("dd.MM.yyyy").withZone(ZoneId.systemDefault()).format(deadline)}"
+
+        newCell.setCellValue(text)
         sheet.addMergedRegion(CellRangeAddress(it.firstRow, it.lastRow, it.firstColumn, it.lastColumn))
     }
-
     workbook.write(FileOutputStream(path))
     workbook.close()
 }

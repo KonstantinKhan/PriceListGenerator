@@ -31,7 +31,7 @@ fun mergeStyle(workbook: Workbook) = workbook.createCellStyle().apply {
     this.verticalAlignment = VerticalAlignment.CENTER
     this.wrapText = true
     this.setFont(workbook.createFont().apply {
-        this.fontHeightInPoints = 16
+        this.fontHeightInPoints = 14
         this.bold = true
     })
 }
