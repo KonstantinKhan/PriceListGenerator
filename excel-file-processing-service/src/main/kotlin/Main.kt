@@ -7,11 +7,11 @@ import com.khan366kos.styles.expiredScanStyle
 import com.khan366kos.styles.expiredStyle
 import com.khan366kos.styles.mergeStyle
 import com.khan366kos.styles.okStyle
+import models.Path
+import models.workbook
 import org.apache.poi.openxml4j.util.ZipSecureFile
 import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.time.Instant
 import java.time.ZoneId
@@ -22,13 +22,14 @@ fun main() {
     ZipSecureFile.setMinInflateRatio(0.0)
     val path =
         "/home/khan/MyProjects/PriceListGenerator/excel-file-processing-service/src/main/resources/Реестр акты Консалтинг 15.01.xlsx"
-    val inputStream = FileInputStream(path)
-    val workbook = XSSFWorkbook(inputStream)
-    inputStream.close()
+    val workbook =
+        workbook {
+            this.path = Path(path)
+        }
+
     val sheet = workbook.getSheetAt(0)
     val parser = CellParser()
     val handler = DocumentHandler(30)
-    val regionMerge = CellRangeAddress(9, 44, 12, 14)
     val mergeMap = mutableMapOf<Int, Pair<Status, Short>>()
     val pairsFirst = mutableListOf<Pair<Int, Int>>()
     val pairsLast = mutableListOf<Pair<Int, Int>>()
